@@ -82,16 +82,34 @@ Tree = tree(info: 10
 				 left: nil
 				 right: nil)
 		       right:nil))
+declare GetElementsInOrder
 fun{GetElementsInOrder Tree}
-   fun{TailGetElementsInOrder Tree Acc}
-      case Tree of tree(info:Info left:L right:R) then
-	 if L \= nil then {TailGetElementsInOrder} end
-      end
+   Y in 
+   case Tree of tree(info:Info left:L right:R) then
+      if R \= nil then Y=Info|{GetElementsInOrder R} else Y=Info end
+      if L \= nil then {GetElementsInOrder L}|Y else Y end
    end
 end
 
+{Browse {GetElementsInOrder Tree}}
+   
+
 % Question 5
-fun{Fib P1 P2 X}
-   if n < 2 then 2
-   elseif 
+declare Fib
+fun{Fib N}
+   if N <3 then 1
+   else {Fib N-1}+{Fib N-2}end
 end
+
+{Browse {Fib 35}}
+
+declare TailFib
+fun{TailFib P1 P2 N}
+   if N == 0 then  P1
+   else P3 in
+      P3 = P1 + P2
+      {TailFib P2 P3 N-1}
+   end
+end
+
+{Browse {TailFib 0 1 35}}
