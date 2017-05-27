@@ -1,0 +1,79 @@
+% TP 5
+% Question 1
+declare
+Numbers SumAndCount FilterList
+L1 L2 Ys S N
+fun{Numbers N I J}
+   D = J-I
+   Modulo = ({OS.rand} mod D)
+   Random = Modulo + I
+in
+   if N == 0 then nil
+   else
+      {Delay 500}
+      Random|thread {Numbers N-1 I J} end
+   end
+end
+
+proc{SumAndCount L ?S ?N}
+   proc{SumAndCountI L AccS AccN}
+      {Delay 250}
+      case L of nil then
+	 S = AccS
+	 N = AccN
+      [] H|T then {SumAndCountI T AccS+H AccN+1}
+      end
+   end
+in
+   {SumAndCountI L 0 0}
+end
+
+fun{FilterList Xs Ys}
+   case Xs of nil then nil
+   []H|T then
+      if {List.member H Ys} then {FilterList T Ys}
+      else H| thread {FilterList T Ys}end
+      end
+   end
+end
+
+Ys = [3 5 12 34 22 34 32 1]
+L1 = {Numbers 10 5 10}
+{Browse ['L1' L1]}
+L2 = {FilterList L1 Ys}
+{Browse ['L2' L2]}
+{SumAndCount L2 S N}
+{Browse [S N]}
+
+% Question 2
+declare NotGate OrGate AndGate
+fun{NotGate S}
+   case S of nil then nil
+   [] H|T then
+      if H == 0 then 1|thread {NotGate T} end
+      else 0|thread {NotGate T} end
+      end
+   end
+end
+
+fun{AndGate S1 S2}
+   case S1#S2 of nil#nil then nil
+   [](H1|T1)#(H2|T2) then
+      if H1 == 1 andthen H2 == 1 then 1|thread{AndGate T1 T2}end
+      else 0|{AndGate T1 T2}end
+   end
+end
+
+fun{OrGate S1 S2}
+   case S1#S2 of nil#nil then nil
+   [](H1|T1)#(H2|T2) then
+      if H1 == 1 orelse H2 == 1 then 1|thread{AndGate T1 T2}end
+      else 0|{AndGate T1 T2}end
+   end
+end
+declare
+X = 1|0|1|0|_
+Y = 0|1|0|1|_
+Z = 1|1|0|0|_
+
+{Browse {OrGate {AndGate X Y} {NotGate Z}}}
